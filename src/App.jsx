@@ -3,6 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "./assets/vite.svg";
 import "./App.css";
 import axios from "axios";
+import MovieTe from "./assets/components/listMovie"; // Seu componente de filmes!
 
 function App() {
   const [count, setCount] = useState(0);
@@ -12,37 +13,32 @@ function App() {
   const [DBZ, setDBZ] = useState({});
   const [poke, setPoke] = useState({});
   const [filme, setFilme] = useState({});
-  const [text, setText] = useState(localStorage.getItem("easy-input") || "");
-  const [sfilme, setSfilme] = useState(localStorage.getItem("name-film") || "");
 
-  useEffect(() => {
-    localStorage.setItem("easy-input", text);
-  }, [text]);
-
-  useEffect(() => {
+useEffect(() => {
     const getData = async () => {
       try {
         const response = await axios.get(
-          "https://6a79e554674f43f4db11ebc8.mockapi.io/api/person/7",
+          "https://6a79e554674f43f4db11ebc8.mockapi.io/api/person/40"
         );
         const responseDBZ = await axios.get(
-          "https://dragonball-api.com/api/characters/33",
+          "https://dragonball-api.com/api/characters/5"
         );
         const responsePoke = await axios.get(
-          "https://pokeapi.co/api/v2/pokemon/Salamence",
+          "https://pokeapi.co/api/v2/pokemon/bulbasaur"
         );
         const responseFilme = await axios.get(
-          "https://www.omdbapi.com/?t=Jurassic+Park&apikey=59ab1eb9",
+          "https://www.omdbapi.com/?t=Fear+and+Loathing+in+Las+Vegas&apikey=59ab1eb9"
         );
-        const responsesfilme = await axios.get(
-          `https://www.omdbapi.com/?s=${setSfilme}&apikey=59ab1eb9`,
-        );
+
+        // --- TRUQUE: Alterando o nome direto no código ---
+        const dadosPerfil = response.data;
+        dadosPerfil.nome = "Buratti"; 
+        // -------------------------------------------------
 
         setPoke(responsePoke.data);
         setDBZ(responseDBZ.data);
-        setPerfil(response.data);
+        setPerfil(dadosPerfil); // Aqui passamos a variável com o nome alterado
         setFilme(responseFilme.data);
-        setSfilme(responseFilme.data);
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -51,7 +47,7 @@ function App() {
       }
     };
     getData();
-  }, [text]);
+  }, []);
 
   if (loading) {
     return <div>Loading</div>;
@@ -63,22 +59,6 @@ function App() {
   return (
     <>
       <section id="center">
-        <div>
-          <label>Digite o nome de um filme: </label>
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => setSfilme(e.target.value)}
-            placeholder="Digite o nome do filme:"
-          />
-          <button
-            onClick={() => {
-              localStorage.setItem("easy-input", text);
-            }}
-          >
-            Enviar
-          </button>
-        </div>
         <div>
           <img
             src={DBZ.image}
@@ -116,21 +96,8 @@ function App() {
             alt=""
           />
           <p>Meu Pet</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Tipo: {poke.types[0].type.name}
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Peso: {poke.weight}
-              </a>
-            </li>
-          </ul>
         </div>
+        
         <div id="social">
           <h2>Meu filme favorito é: {filme.Title}</h2>
           <img
@@ -141,60 +108,16 @@ function App() {
             alt=""
           />
           <p>Nota do IMDB: {filme.imdbRating}</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
         </div>
       </section>
 
       <div className="ticks"></div>
+      
+      {/* Aqui está o seu componente de busca de filmes! */}
+      <section style={{ padding: '20px', borderTop: '2px solid #ccc', marginTop: '20px' }}>
+        <MovieTe />
+      </section>
+
       <section id="spacer"></section>
     </>
   );
