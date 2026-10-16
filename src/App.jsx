@@ -15,7 +15,7 @@ import MovieTe from "./assets/components/listMovie.jsx";
 function App() {
   const [count, setCount] = useState(0);
 
-  // 2.HOOKS PARA BUSCAR OS DADOS
+  // 2.HOOKS PARA BUSCAR DADOS
   
   const { perfil, loading: loadingPerson, error: errorPerson } = usePerson();
   const { DBZ, loading: loadingDBZ, error: errorDBZ } = useDragonBall();

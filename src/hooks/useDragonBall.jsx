@@ -23,6 +23,6 @@ export function useDragonBall() {
     fetchCharacter();
   }, []);
 
-  return { data, loading, error };
+return { DBZ: data, loading, error };
 }
   

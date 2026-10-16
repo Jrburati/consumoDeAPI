@@ -23,6 +23,6 @@ export function usePokemon() {
     fetchPokemon();
   }, []);
 
-  return { data, loading, error };
+return { poke: data, loading, error };
 }
   

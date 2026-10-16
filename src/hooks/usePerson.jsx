@@ -23,5 +23,5 @@ export function usePerson() {
     fetchPerson();
   }, []);
 
-  return { data, loading, error };
+return { perfil: data, loading, error };
 }

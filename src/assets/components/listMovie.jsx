@@ -3,13 +3,13 @@ import { useState, useEffect } from 'react';
 export default function MovieTe() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState(); 
+  const [query, setQuery] = useState(''); 
 
   useEffect(() => {
     const fetchMovies = async () => {
       setLoading(true);
       try {
-        // Sua chave da API já está aqui!
+        // Chave da API 
         const response = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=59ab1eb9`);
         const data = await response.json();
         
@@ -25,7 +25,7 @@ export default function MovieTe() {
       }
     };
 
-    // Debounce: espera 800ms após você parar de digitar para chamar a API
+    // Debounce: espera 800ms 
     const delayDebounceFn = setTimeout(() => {
       if (query.trim() !== '') {
         fetchMovies();
@@ -42,7 +42,7 @@ export default function MovieTe() {
       <h2>Busca de Filmes </h2>
       <p>Digite o nome do filme abaixo:</p>
       
-      {/* O campo de input onde você vai digitar */}
+      {/* Campo de input  */}
       <input
         type="text"
         value={query}
@@ -51,7 +51,7 @@ export default function MovieTe() {
         style={{ padding: '10px', width: '100%', marginBottom: '15px', borderRadius: '5px', border: '1px solid #ccc' }}
       />
 
-      {/* Lógica para mostrar Carregando, a Lista de Filmes ou "Nenhum filme" */}
+      {/* Mostra Carregando, a Lista de Filmes ou "Nenhum filme" */}
       {loading ? (
         <p>Carregando filmes...</p>
       ) : movies.length > 0 ? (

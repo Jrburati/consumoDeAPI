@@ -28,6 +28,7 @@ export function useFilme() {
     fetchFilme();
   }, []);
 
-  return { data, loading, error };
+  return { filme: data, loading, error };
 }
+
   
