@@ -3,7 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "./assets/vite.svg";
 import "./App.css";
 import axios from "axios";
-import MovieTe from "./assets/components/listMovie"; // Seu componente de filmes!
+import MovieTe from "./assets/components/listMovie"; // componente filmes
 
 function App() {
   const [count, setCount] = useState(0);
@@ -30,14 +30,14 @@ useEffect(() => {
           "https://www.omdbapi.com/?t=Fear+and+Loathing+in+Las+Vegas&apikey=59ab1eb9"
         );
 
-        // --- TRUQUE: Alterando o nome direto no código ---
+        // mudei o nome direto no código
         const dadosPerfil = response.data;
         dadosPerfil.nome = "Buratti"; 
         // -------------------------------------------------
 
         setPoke(responsePoke.data);
         setDBZ(responseDBZ.data);
-        setPerfil(dadosPerfil); // Aqui passamos a variável com o nome alterado
+        setPerfil(dadosPerfil); //  variável do nome alterado
         setFilme(responseFilme.data);
         setLoading(false);
       } catch (error) {
@@ -113,7 +113,7 @@ useEffect(() => {
 
       <div className="ticks"></div>
       
-      {/* Aqui está o seu componente de busca de filmes! */}
+      {/* Aqui está o componente de busca de filmes! */}
       <section style={{ padding: '20px', borderTop: '2px solid #ccc', marginTop: '20px' }}>
         <MovieTe />
       </section>
