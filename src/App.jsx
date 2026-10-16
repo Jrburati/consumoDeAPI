@@ -1,59 +1,38 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "./assets/vite.svg";
 import "./App.css";
-import axios from "axios";
-import MovieTe from "./assets/components/listMovie"; // componente filmes
+
+// 1.  HOOKS e EXTENSÕES 
+import usePerson from "./hooks/usePerson.jsx";
+import useDragonBall from "./hooks/useDragonBall.jsx";
+import usePokemon from "./hooks/usePokemon.jsx";
+import useFilme from "./hooks/useFilme.jsx";
+
+// Importando o componentes 
+import MovieTe from "./assets/components/listMovie.jsx"; 
 
 function App() {
   const [count, setCount] = useState(0);
-  const [perfil, setPerfil] = useState({});
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [DBZ, setDBZ] = useState({});
-  const [poke, setPoke] = useState({});
-  const [filme, setFilme] = useState({});
 
-useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await axios.get(
-          "https://6a79e554674f43f4db11ebc8.mockapi.io/api/person/40"
-        );
-        const responseDBZ = await axios.get(
-          "https://dragonball-api.com/api/characters/5"
-        );
-        const responsePoke = await axios.get(
-          "https://pokeapi.co/api/v2/pokemon/bulbasaur"
-        );
-        const responseFilme = await axios.get(
-          "https://www.omdbapi.com/?t=Fear+and+Loathing+in+Las+Vegas&apikey=59ab1eb9"
-        );
+  // 2.HOOKS PARA BUSCAR OS DADOS
+  
+  const { perfil, loading: loadingPerson, error: errorPerson } = usePerson();
+  const { DBZ, loading: loadingDBZ, error: errorDBZ } = useDragonBall();
+  const { poke, loading: loadingPoke, error: errorPoke } = usePokemon();
+  const { filme, loading: loadingFilme, error: errorFilme } = useFilme();
 
-        // mudei o nome direto no código
-        const dadosPerfil = response.data;
-        dadosPerfil.nome = "Buratti"; 
-        // -------------------------------------------------
+  // Verifica se algumas das APIs ainda está carregando
+  const isLoading = loadingPerson || loadingDBZ || loadingPoke || loadingFilme;
+  // Verifica se alguma das APIs deu erro
+  const hasError = errorPerson || errorDBZ || errorPoke || errorFilme;
 
-        setPoke(responsePoke.data);
-        setDBZ(responseDBZ.data);
-        setPerfil(dadosPerfil); //  variável do nome alterado
-        setFilme(responseFilme.data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        setError(true);
-        console.log("Error: ", error);
-      }
-    };
-    getData();
-  }, []);
-
-  if (loading) {
-    return <div>Loading</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
-  if (error) {
-    return <div>Ocorreu um erro inesperado</div>;
+  
+  if (hasError) {
+    return <div>Ocorreu um erro inesperado ao carregar as APIs.</div>;
   }
 
   return (
@@ -61,7 +40,7 @@ useEffect(() => {
       <section id="center">
         <div>
           <img
-            src={DBZ.image}
+            src={DBZ?.image}
             className="base"
             height="280"
             alt=""
@@ -69,7 +48,7 @@ useEffect(() => {
           />
         </div>
         <div>
-          <h1>{perfil.nome}</h1>
+          <h1>{perfil?.nome}</h1>
           <p>
             Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
           </p>
@@ -87,9 +66,9 @@ useEffect(() => {
 
       <section id="next-steps">
         <div id="docs">
-          <h2>{poke.species.name}</h2>
+          <h2>{poke?.species?.name}</h2>
           <img
-            src={poke.sprites.front_shiny}
+            src={poke?.sprites?.front_shiny}
             className="base"
             width="170"
             height="179"
@@ -99,21 +78,21 @@ useEffect(() => {
         </div>
         
         <div id="social">
-          <h2>Meu filme favorito é: {filme.Title}</h2>
+          <h2>Meu filme favorito é: {filme?.Title}</h2>
           <img
-            src={filme.Poster}
+            src={filme?.Poster}
             className="base"
             width="170"
             height="179"
             alt=""
           />
-          <p>Nota do IMDB: {filme.imdbRating}</p>
+          <p>Nota do IMDB: {filme?.imdbRating}</p>
         </div>
       </section>
 
       <div className="ticks"></div>
       
-      {/* Aqui está o componente de busca de filmes! */}
+      {/* Busca de filmes */}
       <section style={{ padding: '20px', borderTop: '2px solid #ccc', marginTop: '20px' }}>
         <MovieTe />
       </section>
