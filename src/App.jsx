@@ -2,10 +2,10 @@ import { useState } from "react";
 import "./App.css";
 
 // 1.  HOOKS e EXTENSÕES 
-import usePerson from "./hooks/usePerson.jsx";
-import useDragonBall from "./hooks/useDragonBall.jsx";
-import usePokemon from "./hooks/usePokemon.jsx";
-import useFilme from "./hooks/useFilme.jsx";
+import { usePerson } from "./hooks/usePerson.jsx";
+import { useDragonBall } from "./hooks/useDragonBall.jsx";
+import { usePokemon } from "./hooks/usePokemon.jsx";
+import { useFilme } from "./hooks/useFilme.jsx";
 
 // Importando o componentes 
 import MovieTe from "./assets/components/listMovie.jsx"; 
