@@ -68,6 +68,11 @@ function movieRequest(parameter, omdbParameter) {
 
 app.get('/api/movies/search', movieRequest('query', 's'));
 app.get('/api/movies/title', movieRequest('title', 't'));
+// API requests must never fall through to the frontend or its SPA fallback.
+app.use('/api', (req, res) => res.status(404).json({ Error: 'Rota não encontrada.' }));
 app.use(express.static(fileURLToPath(new URL('../dist', import.meta.url))));
+app.get('/{*path}', (req, res) => {
+  res.sendFile(fileURLToPath(new URL('../dist/index.html', import.meta.url)));
+});
 
 export default app;
