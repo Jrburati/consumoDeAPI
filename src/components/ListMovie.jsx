@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useOnlineStatus } from '../../hooks/useOnlineStatus.jsx';
+import { useOnlineStatus } from '../hooks/useOnlineStatus.jsx';
 
 export default function MovieTe() {
   const [movies, setMovies] = useState([]);
