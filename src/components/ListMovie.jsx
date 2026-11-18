@@ -36,7 +36,7 @@ function MovieSearchResult({ movie }) {
 }
 
 export default function MovieTe() {
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState(null);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState(''); 
   const [error, setError] = useState(null);
@@ -50,7 +50,7 @@ export default function MovieTe() {
       if (!navigator.onLine || controller.signal.aborted) return;
       setLoading(true);
       setError(null);
-      setMovies([]);
+      setMovies(null);
       try {
         const params = new URLSearchParams({ query });
         const response = await fetch(`/api/movies/search?${params}`, {
@@ -71,7 +71,7 @@ export default function MovieTe() {
         }
       } catch (error) {
         if (controller.signal.aborted) return;
-        setMovies([]);
+        setMovies(null);
         setError('Erro ao buscar filmes. Tente novamente.');
         console.error("Erro ao buscar filmes:", error);
       } finally {
@@ -84,7 +84,7 @@ export default function MovieTe() {
       if (query.trim() !== '') {
         fetchMovies();
       } else {
-        setMovies([]); 
+        setMovies(null);
       }
     }, 800);
 
@@ -106,7 +106,7 @@ export default function MovieTe() {
         value={query}
         onChange={(e) => {
           setQuery(e.target.value);
-          setMovies([]);
+          setMovies(null);
           setError(null);
           setLoading(false);
         }}
@@ -120,7 +120,7 @@ export default function MovieTe() {
         <p>Carregando filmes...</p>
       ) : error ? (
         <p role="alert">{error}</p>
-      ) : movies.length > 0 ? (
+      ) : movies?.length > 0 ? (
         <ul className="movie-search-results">
           {movies.map((movie) => (
             <li key={movie.imdbID}>
@@ -128,9 +128,9 @@ export default function MovieTe() {
             </li>
           ))}
         </ul>
-      ) : (
+      ) : movies?.length === 0 ? (
         <p>Nenhum filme encontrado.</p>
-      )}
+      ) : null}
     </div>
   );
 }
