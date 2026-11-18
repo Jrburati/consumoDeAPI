@@ -1,10 +1,20 @@
 import axios from 'axios';
 
-export async function getDragonBallCharacter(id, signal) {
-  const response = await axios.get(
-    `https://dragonball-api.com/api/characters/${id}`,
-    { signal, timeout: 10000 },
-  );
+const catalogPageSize = 100;
 
-  return response.data;
+export async function getDragonBallCharacters(signal) {
+  const characters = [];
+  let totalPages = 1;
+
+  for (let page = 1; page <= totalPages; page += 1) {
+    const { data } = await axios.get('https://dragonball-api.com/api/characters', {
+      params: { page, limit: catalogPageSize },
+      signal,
+      timeout: 10000,
+    });
+    characters.push(...data.items.filter((item) => item && typeof item === 'object'));
+    totalPages = data.meta.totalPages;
+  }
+
+  return characters;
 }

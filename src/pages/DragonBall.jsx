@@ -7,28 +7,43 @@ import { useOnlineStatus } from '../hooks/useOnlineStatus.jsx';
 import './DragonBall.css';
 
 function DragonBallGallery() {
-  const results = useDragonBall();
-
-  if (!results) {
-    return <p role="status">Carregando personagens…</p>;
-  }
-
-  const { characters, unavailableCount } = results;
-
-  if (!characters.length) {
-    return <p role="status">Não foi possível carregar os personagens.</p>;
-  }
+  const {
+    characters, total, error, loading, query, changeQuery, searching, hasMore, loadMore,
+  } = useDragonBall();
 
   return (
     <>
-      {unavailableCount > 0 && (
-        <p className="dragonball-gallery-status" role="status">Alguns personagens não puderam ser carregados.</p>
+      <div className="dragonball-search">
+        <label htmlFor="dragonball-search">Buscar personagem por nome</label>
+        <input
+          id="dragonball-search"
+          type="search"
+          value={query}
+          onChange={(event) => changeQuery(event.target.value)}
+        />
+      </div>
+      {loading && <p role="status">Carregando personagens…</p>}
+      {error && <p role="status">Não foi possível carregar os personagens.</p>}
+      {!loading && !error && total === 0 && (
+        <p role="status">{searching ? 'Nenhum personagem encontrado.' : 'O catálogo está vazio.'}</p>
       )}
-      <ul className="dragonball-gallery">
-        {characters.map((character) => (
-          <li key={character.id}><DragonBallCharacter character={character} /></li>
-        ))}
-      </ul>
+      {characters.length > 0 && (
+        <>
+          <p className="dragonball-catalog-count">{characters.length} de {total} personagens</p>
+          <ul className="dragonball-gallery">
+            {characters.map((character, index) => (
+              <li key={character.id ?? `entry-${index}`}>
+                <DragonBallCharacter character={character} />
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      {hasMore && (
+        <button className="dragonball-load-more" type="button" onClick={loadMore}>
+          Carregar mais
+        </button>
+      )}
     </>
   );
 }

@@ -1,40 +1,58 @@
 import { useEffect, useState } from 'react';
-import { getDragonBallCharacter } from '../api/dragonBallApi.js';
+import { getDragonBallCharacters } from '../api/dragonBallApi.js';
 
-const characterIds = {
-  Goku: 1,
-  Vegeta: 2,
-  Gohan: 10,
-  Piccolo: 3,
-  Freezer: 5,
-  Cell: 9,
-  'Majin Buu': 32,
-  Trunks: 16,
-};
+const pageSize = 12;
+
+function normalizeName(name) {
+  return typeof name === 'string' ? name.trim().toLowerCase() : '';
+}
 
 export function useDragonBall() {
-  const [results, setResults] = useState(null);
+  const [catalog, setCatalog] = useState(null);
+  const [error, setError] = useState(false);
+  const [query, setQuery] = useState('');
+  const [catalogLimit, setCatalogLimit] = useState(pageSize);
+  const [searchLimit, setSearchLimit] = useState(pageSize);
+  const term = normalizeName(query);
+  const searching = term !== '';
+  const limit = searching ? searchLimit : catalogLimit;
+  const matches = (searching ? catalog?.filter(({ name }) => normalizeName(name).includes(term)) : catalog) ?? [];
 
   useEffect(() => {
     const controller = new AbortController();
 
     async function fetchCharacters() {
-      const ids = Object.values(characterIds);
-      const responses = await Promise.allSettled(
-        ids.map((id) => getDragonBallCharacter(id, controller.signal)),
-      );
-
-      if (controller.signal.aborted) return;
-
-      const characters = responses.flatMap((response) =>
-        response.status === 'fulfilled' ? [response.value] : [],
-      );
-      setResults({ characters, unavailableCount: ids.length - characters.length });
+      try {
+        const characters = await getDragonBallCharacters(controller.signal);
+        if (!controller.signal.aborted) setCatalog(characters);
+      } catch {
+        if (!controller.signal.aborted) setError(true);
+      }
     }
 
     fetchCharacters();
     return () => controller.abort();
   }, []);
 
-  return results;
+  function changeQuery(value) {
+    if (normalizeName(value) !== term) setSearchLimit(pageSize);
+    setQuery(value);
+  }
+
+  function loadMore() {
+    const setLimit = searching ? setSearchLimit : setCatalogLimit;
+    setLimit((previous) => previous + pageSize);
+  }
+
+  return {
+    characters: matches.slice(0, limit),
+    total: matches.length,
+    error,
+    loading: catalog === null && !error,
+    query,
+    changeQuery,
+    searching,
+    hasMore: limit < matches.length,
+    loadMore,
+  };
 }

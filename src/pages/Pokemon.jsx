@@ -5,28 +5,46 @@ import { usePokemon } from '../hooks/usePokemon.jsx';
 import './Pokemon.css';
 
 function PokemonGallery() {
-  const results = usePokemon();
-
-  if (!results) {
-    return <p className="pokemon-gallery-status" role="status">Carregando a galeria de Pokémon…</p>;
-  }
-
-  const { pokemon, unavailableCount } = results;
-
-  if (!pokemon.length) {
-    return <p className="pokemon-gallery-status" role="status">Não foi possível carregar a galeria de Pokémon.</p>;
-  }
+  const {
+    catalogError, catalogLoading, entries, detailsLoading, query, changeQuery,
+    searching, total, hasMore, loadMore,
+  } = usePokemon();
+  const loading = catalogLoading || detailsLoading;
 
   return (
     <>
-      {unavailableCount > 0 && (
-        <p className="pokemon-gallery-status" role="status">Alguns Pokémon não puderam ser carregados.</p>
+      <div className="pokemon-search">
+        <label htmlFor="pokemon-search">Buscar Pokémon por nome</label>
+        <input
+          id="pokemon-search"
+          type="search"
+          value={query}
+          onChange={(event) => changeQuery(event.target.value)}
+          placeholder="Ex.: Pikachu"
+        />
+      </div>
+      {catalogError && (
+        <p role="status">Não foi possível carregar o catálogo de Pokémon.</p>
       )}
-      <ul className="pokemon-gallery" aria-label="Galeria de Pokémon">
-        {pokemon.map((entry) => (
-          <li key={entry.name}><PokemonCard pokemon={entry} /></li>
-        ))}
-      </ul>
+      {!catalogError && !loading && total === 0 && (
+        <p role="status">{searching ? 'Nenhum Pokémon encontrado.' : 'O catálogo está vazio.'}</p>
+      )}
+      {entries.length > 0 && (
+        <>
+          <p className="pokemon-catalog-count">{entries.length} de {total} Pokémon</p>
+          <ul className="pokemon-gallery" aria-label="Galeria de Pokémon">
+            {entries.map(({ name, pokemon }) => (
+              <li key={name}><PokemonCard name={name} pokemon={pokemon} /></li>
+            ))}
+          </ul>
+        </>
+      )}
+      {loading && <p className="pokemon-gallery-status" role="status">Carregando Pokémon…</p>}
+      {hasMore && (
+        <button className="pokemon-load-more" type="button" onClick={loadMore} disabled={loading}>
+          Carregar mais
+        </button>
+      )}
     </>
   );
 }

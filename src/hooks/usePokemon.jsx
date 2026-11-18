@@ -1,33 +1,105 @@
-import { useEffect, useState } from 'react';
-import { getPokemon } from '../api/pokemonApi.js';
+import { useEffect, useEffectEvent, useMemo, useState } from 'react';
+import { getPokemon, getPokemonNames } from '../api/pokemonApi.js';
 
-const pokemonNames = [
-  'pikachu', 'charizard', 'bulbasaur', 'squirtle',
-  'gengar', 'eevee', 'snorlax', 'lucario',
-];
+const pageSize = 24;
+const detailConcurrency = 6;
+const searchDelay = 250;
+
+function normalizeQuery(query) {
+  return query.trim().toLowerCase().replace(/\s+/g, '-');
+}
 
 export function usePokemon() {
-  const [results, setResults] = useState(null);
+  const [catalog, setCatalog] = useState(null);
+  const [catalogError, setCatalogError] = useState(false);
+  const [query, setQuery] = useState('');
+  const [catalogLimit, setCatalogLimit] = useState(pageSize);
+  const [searchLimit, setSearchLimit] = useState(pageSize);
+  const [details, setDetails] = useState(() => new Map());
+  const term = normalizeQuery(query);
+  const searching = term !== '';
+  const limit = searching ? searchLimit : catalogLimit;
+
+  const matches = useMemo(
+    () => searching ? catalog?.filter((name) => name.includes(term)) : catalog,
+    [catalog, searching, term],
+  );
+  const visibleNames = useMemo(() => matches?.slice(0, limit) ?? [], [matches, limit]);
+  const getPendingNames = useEffectEvent(
+    (names) => names.filter((name) => !details.has(name)),
+  );
 
   useEffect(() => {
     const controller = new AbortController();
 
-    async function fetchGallery() {
-      const responses = await Promise.allSettled(
-        pokemonNames.map((name) => getPokemon(name, controller.signal)),
-      );
-
-      if (controller.signal.aborted) return;
-
-      const pokemon = responses.flatMap((response) =>
-        response.status === 'fulfilled' ? [response.value] : [],
-      );
-      setResults({ pokemon, unavailableCount: pokemonNames.length - pokemon.length });
+    async function fetchCatalog() {
+      try {
+        const names = await getPokemonNames(controller.signal);
+        if (!controller.signal.aborted) setCatalog(names);
+      } catch {
+        if (!controller.signal.aborted) setCatalogError(true);
+      }
     }
 
-    fetchGallery();
+    fetchCatalog();
     return () => controller.abort();
   }, []);
 
-  return results;
+  useEffect(() => {
+    const pendingNames = getPendingNames(visibleNames);
+    if (!pendingNames.length) return;
+
+    const controller = new AbortController();
+
+    async function fetchDetails() {
+      for (let start = 0; start < pendingNames.length; start += detailConcurrency) {
+        const batch = pendingNames.slice(start, start + detailConcurrency);
+        const responses = await Promise.allSettled(
+          batch.map((name) => getPokemon(name, controller.signal)),
+        );
+        if (controller.signal.aborted) return;
+
+        setDetails((previous) => {
+          const updated = new Map(previous);
+          responses.forEach((response, index) => {
+            updated.set(batch[index], response.status === 'fulfilled' ? response.value : null);
+          });
+          return updated;
+        });
+      }
+    }
+
+    const timer = setTimeout(fetchDetails, searching ? searchDelay : 0);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [visibleNames, searching]);
+
+  const entries = visibleNames
+    .filter((name) => details.has(name))
+    .map((name) => ({ name, pokemon: details.get(name) }));
+
+  function changeQuery(value) {
+    if (normalizeQuery(value) !== term) setSearchLimit(pageSize);
+    setQuery(value);
+  }
+
+  function loadMore() {
+    const setLimit = searching ? setSearchLimit : setCatalogLimit;
+    setLimit((previous) => previous + pageSize);
+  }
+
+  return {
+    catalogError,
+    catalogLoading: catalog === null && !catalogError,
+    entries,
+    detailsLoading: entries.length < visibleNames.length,
+    query,
+    changeQuery,
+    searching,
+    total: matches?.length ?? 0,
+    hasMore: visibleNames.length < (matches?.length ?? 0),
+    loadMore,
+  };
 }

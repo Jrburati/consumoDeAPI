@@ -48,6 +48,41 @@
   outline-color: #c084fc;
 }
 
+.dragonball-search {
+  display: grid;
+  gap: 6px;
+  max-width: 28rem;
+  margin-bottom: 16px;
+}
+
+.dragonball-search label {
+  color: var(--dragonball-text);
+  font-weight: 650;
+}
+
+.dragonball-search input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #74588e;
+  border-radius: 9px;
+  background: #171020;
+  color: var(--dragonball-text);
+  color-scheme: dark;
+  font: inherit;
+}
+
+.dragonball-search input:focus-visible,
+.dragonball-load-more:focus-visible {
+  outline: 2px solid #c084fc;
+  outline-offset: 2px;
+}
+
+.dragonball-catalog-count {
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+}
+
 .dragonball-gallery {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -57,8 +92,21 @@
   list-style: none;
 }
 
-.dragonball-gallery-status {
-  margin-bottom: 16px;
+.dragonball-load-more {
+  display: block;
+  margin: 24px auto 0;
+  padding: 10px 16px;
+  border: 1px solid #74588e;
+  border-radius: 9px;
+  background: #291b3c;
+  color: #e3c9ff;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.dragonball-load-more:hover {
+  border-color: #c084fc;
 }
 
 .dragonball-character {
