@@ -1,0 +1,186 @@
+.page.catalog-page {
+  --catalog-panel: color-mix(in srgb, var(--surface-soft) 88%, transparent);
+  --catalog-outline: color-mix(in srgb, var(--accent) 32%, var(--border));
+  --catalog-accent: var(--accent);
+  --catalog-glow: var(--glow-purple);
+  flex: 1;
+  padding: max(clamp(24px, 4vw, 44px), env(safe-area-inset-top))
+    max(var(--space-page), env(safe-area-inset-right))
+    max(clamp(32px, 5vw, 56px), env(safe-area-inset-bottom))
+    max(var(--space-page), env(safe-area-inset-left));
+  background: radial-gradient(ellipse 700px 290px at 85% 0%, var(--glow-purple), transparent), var(--bg);
+  color: var(--text-muted);
+  text-align: left;
+}
+
+.catalog-header {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-bottom: clamp(20px, 3.5vw, 36px);
+  padding: clamp(18px, 3.4vw, 38px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background:
+    radial-gradient(ellipse at 92% 0%, var(--catalog-glow), transparent 70%),
+    linear-gradient(125deg, var(--surface-soft), var(--surface));
+}
+
+.catalog-header::before {
+  position: absolute;
+  inset: -1px auto auto clamp(18px, 3.4vw, 38px);
+  width: clamp(38px, 8vw, 92px);
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--purple), var(--catalog-accent));
+  content: '';
+}
+
+.catalog-header h1 {
+  margin: 0;
+  font-size: clamp(1.85rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+}
+
+.catalog-header p {
+  margin-top: 8px;
+  line-height: 1.45;
+}
+
+.catalog-page :is(.catalog-header .navigate-button, .catalog-more, .dragonball-profile .counter) {
+  min-height: 44px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px 15px;
+  border: 1px solid var(--catalog-outline);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface) 88%, var(--purple));
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: none;
+}
+
+.catalog-page .catalog-more {
+  display: block;
+  margin: 24px auto 0;
+}
+
+.catalog-more:disabled {
+  opacity: 0.65;
+}
+
+.catalog-page :is(.catalog-header .navigate-button, .catalog-more:enabled, .dragonball-profile .counter):hover {
+  border-color: color-mix(in srgb, var(--cyan) 56%, var(--border));
+  color: var(--cyan);
+  box-shadow: 0 0 18px var(--glow-cyan);
+  cursor: pointer;
+}
+
+.catalog-page :is(.catalog-header .navigate-button, .catalog-more, .dragonball-profile .counter, .catalog-search input):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.catalog-search label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text);
+  font-weight: 650;
+}
+
+.catalog-search input {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border: 1px solid var(--catalog-outline);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface) 78%, var(--bg));
+  color: var(--text);
+  font: inherit;
+}
+
+.catalog-search input::placeholder {
+  color: var(--text-muted);
+}
+
+.catalog-search input:focus {
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 16px var(--glow-cyan);
+}
+
+.catalog-page :where(p[role='status'], p[role='alert'], .filmes-search > .card > p) {
+  margin-block: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-inline-start: 2px solid var(--catalog-outline);
+  border-radius: 10px;
+  background: var(--catalog-panel);
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.catalog-page :where(.pokemon-catalog-count, .dragonball-catalog-count) {
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.catalog-page :where(.pokemon-gallery, .favorites-gallery, .movie-search-results, .dragonball-gallery) {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-grid);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.catalog-page :where(.pokemon-card, .favorite-movie, .search-movie, .dragonball-character) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--catalog-panel);
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 880px) {
+  .catalog-page :where(.pokemon-gallery, .favorites-gallery, .movie-search-results, .dragonball-gallery) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .catalog-page :where(.pokemon-gallery, .favorites-gallery, .movie-search-results, .dragonball-gallery) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .catalog-page :where(.pokemon-card, .favorite-movie, .search-movie, .dragonball-character):hover {
+    border-color: color-mix(in srgb, var(--catalog-accent) 39%, var(--border));
+    box-shadow: var(--shadow), 0 0 22px var(--catalog-glow);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .catalog-page :where(.pokemon-card, .favorite-movie, .search-movie, .dragonball-character) {
+    transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  .catalog-page :where(.pokemon-card, .favorite-movie, .search-movie, .dragonball-character):hover {
+    transform: translateY(-3px);
+  }
+}

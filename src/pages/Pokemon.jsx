@@ -2,6 +2,7 @@ import NavigateButton from '../components/NavigateButton.jsx';
 import PokemonCard from '../components/PokemonCard.jsx';
 import { useOnlineStatus } from '../hooks/useOnlineStatus.jsx';
 import { usePokemon } from '../hooks/usePokemon.jsx';
+import './Catalog.css';
 import './Pokemon.css';
 
 function PokemonGallery() {
@@ -13,7 +14,7 @@ function PokemonGallery() {
 
   return (
     <>
-      <div className="pokemon-search">
+      <div className="catalog-search pokemon-search">
         <label htmlFor="pokemon-search">Buscar Pokémon por nome</label>
         <input
           id="pokemon-search"
@@ -41,7 +42,7 @@ function PokemonGallery() {
       )}
       {loading && <p className="pokemon-gallery-status" role="status">Carregando Pokémon…</p>}
       {hasMore && (
-        <button className="pokemon-load-more" type="button" onClick={loadMore} disabled={loading}>
+        <button className="catalog-more pokemon-load-more" type="button" onClick={loadMore} disabled={loading}>
           Carregar mais
         </button>
       )}
@@ -53,9 +54,12 @@ export default function Pokemon() {
   const isOnline = useOnlineStatus();
 
   return (
-    <main className="page pokemon-page">
-      <header className="pokemon-page-header">
-        <h1>Pokémon</h1>
+    <main className="page catalog-page pokemon-page">
+      <header className="catalog-header pokemon-page-header">
+        <div>
+          <h1>Pokémon</h1>
+          <p>Explore o catálogo e descubra os tipos de cada Pokémon.</p>
+        </div>
         <NavigateButton path="/">Voltar para Home</NavigateButton>
       </header>
       {isOnline && <PokemonGallery />}

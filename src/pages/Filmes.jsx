@@ -3,6 +3,7 @@ import FavoriteMovie from '../components/FavoriteMovie.jsx';
 import ListMovie from '../components/ListMovie.jsx';
 import { useFilme } from '../hooks/useFilme.jsx';
 import { useOnlineStatus } from '../hooks/useOnlineStatus.jsx';
+import './Catalog.css';
 import './Filmes.css';
 
 function FavoritesGallery() {
@@ -36,16 +37,19 @@ export default function Filmes() {
   const isOnline = useOnlineStatus();
 
   return (
-    <main className="page filmes-page">
-      <header className="filmes-header">
-        <h1>Filmes</h1>
+    <main className="page catalog-page filmes-page">
+      <header className="catalog-header filmes-header">
+        <div>
+          <h1>Filmes</h1>
+          <p>Explore os favoritos e encontre outros títulos na busca.</p>
+        </div>
         <NavigateButton path="/">Voltar para Home</NavigateButton>
       </header>
       <section aria-labelledby="favorites-heading">
         <h2 id="favorites-heading">Meus Favoritos</h2>
         {isOnline && <FavoritesGallery />}
       </section>
-      <section className="filmes-search" aria-labelledby="movie-search-heading">
+      <section className="catalog-search filmes-search" aria-labelledby="movie-search-heading">
         <ListMovie />
       </section>
     </main>

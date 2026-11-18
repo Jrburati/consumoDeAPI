@@ -1,5 +1,4 @@
 import NavigateButton from '../components/NavigateButton.jsx';
-import brtPlayIcon from '../assets/brt-play-icon.svg';
 import './Home.css';
 
 const sections = [
@@ -27,8 +26,13 @@ export default function Home() {
   return (
     <main className="page home-page">
       <header className="home-brand">
-        <img src={brtPlayIcon} width="96" height="96" alt="" />
-        <h1>BRT Play</h1>
+        <div className="home-brand-copy">
+          <h1>BRT <span>Play</span></h1>
+          <p>Explore seus universos.</p>
+        </div>
+        <div className="home-brand-art">
+          <img src="/brt-play-logo-cyberpunk.png" width="1254" height="1254" alt="" />
+        </div>
       </header>
       <nav className="home-catalog" aria-label="Seções do BRT Play">
         {sections.map(({ path, category, title, description }) => (
@@ -38,8 +42,8 @@ export default function Home() {
             </span>
             <span className="home-card-content">
               <span className="home-card-title">{title}</span>
-              <span className="home-card-arrow" aria-hidden="true">→</span>
               <span className="home-card-description">{description}</span>
+              <span className="home-card-action" aria-hidden="true">Acessar <span>→</span></span>
             </span>
           </NavigateButton>
         ))}

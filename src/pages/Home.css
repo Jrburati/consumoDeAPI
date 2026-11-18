@@ -1,40 +1,94 @@
 .home-page {
-  --home-text: #f6f0ff;
-  --home-muted: #c5b8d6;
-  --home-border: #47345d;
-  --home-surface: #20172e;
   flex: 1;
-  padding: clamp(24px, 5vw, 64px) clamp(20px, 4vw, 44px);
-  background: radial-gradient(ellipse at 50% 0%, #302046, #151020 52%, #100d18);
+  padding: max(clamp(24px, 5vw, 56px), env(safe-area-inset-top))
+    max(var(--space-page), env(safe-area-inset-right))
+    max(clamp(32px, 5vw, 56px), env(safe-area-inset-bottom))
+    max(var(--space-page), env(safe-area-inset-left));
+  background:
+    radial-gradient(ellipse at 78% 0%, var(--glow-purple), transparent 55%),
+    var(--bg);
+  text-align: left;
 }
 
 .home-brand {
+  position: relative;
   display: grid;
-  justify-items: center;
-  gap: 12px;
-  margin-bottom: clamp(28px, 5vw, 56px);
+  grid-template-columns: minmax(0, 1fr) minmax(130px, 37%);
+  align-items: center;
+  gap: clamp(12px, 3vw, 40px);
+  overflow: hidden;
+  margin-bottom: clamp(20px, 3vw, 32px);
+  padding: clamp(20px, 4.5vw, 48px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background:
+    radial-gradient(ellipse at 78% 48%, var(--glow-purple), transparent 58%),
+    linear-gradient(120deg, var(--surface), #0e1020 60%, #11152b);
+  box-shadow: var(--shadow);
 }
 
-.home-brand img {
+.home-brand::before {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(#a18eee13 1px, transparent 1px),
+    linear-gradient(90deg, #a18eee13 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(90deg, transparent 24%, #000);
+  pointer-events: none;
+  content: '';
+}
+
+.home-brand-copy,
+.home-brand-art {
+  position: relative;
+}
+
+.home-brand-copy::before {
   display: block;
-  width: clamp(76px, 11vw, 96px);
-  height: auto;
-  border-radius: 22%;
-  box-shadow: 0 0 0 1px #8b60b566, 0 12px 36px #16092399;
+  width: clamp(24px, 5vw, 52px);
+  height: 2px;
+  margin-bottom: clamp(10px, 2vw, 18px);
+  background: linear-gradient(90deg, var(--purple), var(--cyan));
+  box-shadow: 0 0 14px var(--glow-purple);
+  content: '';
 }
 
 .home-brand h1 {
   margin: 0;
-  color: var(--home-text);
-  font-size: clamp(2.5rem, 7vw, 4rem);
-  font-weight: 750;
-  line-height: 1.04;
+  font-size: clamp(2.1rem, 7.8vw, 5.125rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+
+.home-brand h1 span {
+  color: #d7c1ff;
+  text-shadow: 0 0 30px var(--glow-purple);
+}
+
+.home-brand p {
+  margin-top: clamp(8px, 1.5vw, 16px);
+  color: var(--text-muted);
+  font-size: clamp(0.95rem, 2vw, 1.35rem);
+  line-height: 1.4;
+}
+
+.home-brand-art {
+  justify-self: center;
+  width: min(100%, 230px);
+}
+
+.home-brand-art img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .home-catalog {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(12px, 2vw, 22px);
+  gap: var(--space-grid);
 }
 
 .home-catalog .navigate-button {
@@ -44,55 +98,68 @@
   align-items: stretch;
   margin: 0;
   padding: 0;
-  border: 1px solid var(--home-border);
-  border-radius: 18px;
-  background: var(--home-surface);
-  color: var(--home-text);
-  box-shadow: 0 10px 24px #08060d66;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: color-mix(in srgb, var(--surface-soft) 82%, transparent);
+  color: var(--text);
+  box-shadow: var(--shadow);
   font: inherit;
-  text-align: left;
 }
 
 .home-catalog .navigate-button:focus-visible {
-  border-color: #c084fc;
-  outline: 2px solid #c084fc;
+  border-color: var(--focus-ring);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
 }
 
 .home-card-visual {
-  display: grid;
-  place-items: center;
-  min-height: clamp(138px, 18vw, 214px);
-  border-radius: 17px 17px 0 0;
-  background:
-    radial-gradient(circle, transparent 34%, color-mix(in srgb, var(--home-card-accent) 26%, transparent) 34.5% 35%, transparent 35.5% 48%, color-mix(in srgb, var(--home-card-accent) 15%, transparent) 48.5% 49%, transparent 49.5%),
-    radial-gradient(ellipse at center, var(--home-card-glow), #21162d 78%);
-  color: var(--home-card-accent);
-}
-
-.home-card-visual[data-category='pokemon'] {
-  --home-card-accent: #ffdb79;
-  --home-card-glow: #63412d;
-}
-
-.home-card-visual[data-category='filmes'] {
-  --home-card-accent: #d7b5ff;
-  --home-card-glow: #54377e;
-}
-
-.home-card-visual[data-category='dragonball'] {
-  --home-card-accent: #ffad7b;
-  --home-card-glow: #703746;
-}
-
-.home-card-icon {
   position: relative;
   display: grid;
   place-items: center;
+  min-height: clamp(126px, 14vw, 176px);
+  border-radius: calc(var(--radius-panel) - 1px) calc(var(--radius-panel) - 1px) 0 0;
+  background:
+    radial-gradient(circle, transparent 34%, color-mix(in srgb, currentColor 28%, transparent) 34.5% 35%, transparent 35.5% 48%, color-mix(in srgb, currentColor 15%, transparent) 48.5% 49%, transparent 49.5%),
+    radial-gradient(ellipse at center, var(--home-card-glow), transparent 76%),
+    var(--surface);
+  color: var(--home-card-accent);
+}
+
+.home-card-visual::after {
+  position: absolute;
+  inset: 12px;
+  background:
+    linear-gradient(currentColor 1px, transparent 1px) top left / 14px 1px,
+    linear-gradient(90deg, currentColor 1px, transparent 1px) top left / 1px 14px,
+    linear-gradient(currentColor 1px, transparent 1px) bottom right / 14px 1px,
+    linear-gradient(90deg, currentColor 1px, transparent 1px) bottom right / 1px 14px;
+  background-repeat: no-repeat;
+  opacity: 0.48;
+  content: '';
+}
+
+.home-card-visual[data-category='pokemon'] {
+  --home-card-accent: #72efff;
+  --home-card-glow: var(--glow-cyan);
+}
+
+.home-card-visual[data-category='filmes'] {
+  --home-card-accent: var(--accent);
+  --home-card-glow: var(--glow-purple);
+}
+
+.home-card-visual[data-category='dragonball'] {
+  --home-card-accent: #ffa2e8;
+  --home-card-glow: color-mix(in srgb, var(--magenta) 13%, transparent);
+}
+
+.home-card-icon {
+  display: grid;
+  place-items: center;
   box-sizing: border-box;
-  width: clamp(46px, 7vw, 78px);
+  width: clamp(40px, 6vw, 68px);
   aspect-ratio: 1;
-  filter: drop-shadow(0 0 14px color-mix(in srgb, currentColor 35%, transparent));
+  filter: drop-shadow(0 0 12px color-mix(in srgb, currentColor 36%, transparent));
 }
 
 [data-category='pokemon'] .home-card-icon::before {
@@ -104,10 +171,9 @@
 }
 
 [data-category='filmes'] .home-card-icon {
-  height: 72%;
-  max-height: 58px;
+  aspect-ratio: 4 / 3;
   border: 2px solid currentColor;
-  border-radius: 10px;
+  border-radius: 8px;
   transform: rotate(-8deg);
 }
 
@@ -120,10 +186,10 @@
 }
 
 [data-category='dragonball'] .home-card-icon {
-  width: clamp(40px, 6vw, 66px);
+  width: clamp(34px, 5vw, 57px);
   border: 2px solid currentColor;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 24%, #ffd8a45c, #c7673524 62%);
+  background: radial-gradient(circle at 30% 24%, color-mix(in srgb, currentColor 26%, transparent), transparent 65%);
 }
 
 [data-category='dragonball'] .home-card-icon::before {
@@ -135,38 +201,45 @@
 }
 
 .home-card-content {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-content: start;
-  align-items: center;
-  gap: 7px 12px;
-  padding: clamp(14px, 2vw, 22px);
-  border-top: 1px solid var(--home-border);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  padding: clamp(13px, 2vw, 22px);
+  border-top: 1px solid var(--border);
 }
 
 .home-card-title {
-  font-size: clamp(1.25rem, 2.5vw, 1.6rem);
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: clamp(1.15rem, 2.5vw, 1.6rem);
+  font-weight: 750;
+  line-height: 1.15;
 }
 
 .home-card-description {
-  grid-column: 1 / -1;
-  color: var(--home-muted);
+  color: var(--text-muted);
   font-size: 0.9rem;
   line-height: 1.45;
 }
 
-.home-card-arrow {
-  color: #d9afff;
-  font-size: 1.25rem;
+.home-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 7px;
+  color: var(--accent);
+  font-size: 0.83rem;
+  font-weight: 700;
+}
+
+.home-card-action span {
   line-height: 1;
 }
 
-@media (max-width: 680px) {
-  .home-catalog,
-  .home-catalog .navigate-button {
-    grid-template-rows: auto;
+@media (max-width: 720px) {
+  .home-brand {
+    grid-template-columns: minmax(0, 1fr) minmax(72px, 33%);
+    padding: clamp(14px, 4.3vw, 28px);
   }
 
   .home-catalog {
@@ -174,25 +247,33 @@
   }
 
   .home-catalog .navigate-button {
-    grid-template-columns: clamp(76px, 21vw, 124px) minmax(0, 1fr);
+    grid-template-columns: clamp(73px, 23vw, 136px) minmax(0, 1fr);
+    grid-template-rows: auto;
   }
 
   .home-card-visual {
-    min-height: 96px;
-    border-radius: 17px 0 0 17px;
+    min-height: 100px;
+    border-radius: calc(var(--radius-panel) - 1px) 0 0 calc(var(--radius-panel) - 1px);
+  }
+
+  .home-card-visual::after {
+    inset: 8px;
   }
 
   .home-card-content {
-    align-content: center;
     border-top: 0;
-    border-left: 1px solid var(--home-border);
+    border-left: 1px solid var(--border);
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
   .home-catalog .navigate-button:hover {
-    border-color: #8a60b0;
-    box-shadow: 0 14px 32px #08060d99;
+    border-color: var(--accent-border);
+    box-shadow: var(--shadow), 0 0 26px var(--glow-purple);
+  }
+
+  .home-catalog .navigate-button:hover .home-card-action {
+    color: var(--cyan);
   }
 }
 
@@ -203,5 +284,11 @@
 
   .home-catalog .navigate-button:hover {
     transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-catalog .navigate-button {
+    transition: none;
   }
 }

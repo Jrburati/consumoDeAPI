@@ -9,6 +9,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: null,
+      includeAssets: ['brt-play-logo-cyberpunk.png', 'apple-touch-icon.png', 'favicon-64.png'],
       manifest: {
         id: '/',
         name: 'BRT Play',

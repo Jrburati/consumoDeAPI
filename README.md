@@ -78,5 +78,6 @@ Atualizações do service worker são ativadas automaticamente, substituem os ar
 estáticos da versão anterior e podem recarregar abas abertas. Nenhuma variável de
 ambiente é incluída no precache.
 
-O ícone original está em `public/pwa-icon.svg`, com versões PNG de 192 e 512 pixels
-e uma versão maskable de 512 pixels.
+A Home usa `public/brt-play-logo-cyberpunk.png`. Os ícones do manifesto são
+`pwa-192x192.png`, `pwa-512x512.png` e `pwa-maskable-512x512.png`. O ícone da tela
+de início da Apple é `apple-touch-icon.png` e o favicon é `favicon-64.png`.

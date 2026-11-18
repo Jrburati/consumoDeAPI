@@ -4,6 +4,7 @@ import Profile from '../components/Profile.jsx';
 import Counter from '../components/Counter.jsx';
 import { useDragonBall } from '../hooks/useDragonBall.jsx';
 import { useOnlineStatus } from '../hooks/useOnlineStatus.jsx';
+import './Catalog.css';
 import './DragonBall.css';
 
 function DragonBallGallery() {
@@ -13,7 +14,7 @@ function DragonBallGallery() {
 
   return (
     <>
-      <div className="dragonball-search">
+      <div className="catalog-search dragonball-search">
         <label htmlFor="dragonball-search">Buscar personagem por nome</label>
         <input
           id="dragonball-search"
@@ -40,7 +41,7 @@ function DragonBallGallery() {
         </>
       )}
       {hasMore && (
-        <button className="dragonball-load-more" type="button" onClick={loadMore}>
+        <button className="catalog-more dragonball-load-more" type="button" onClick={loadMore}>
           Carregar mais
         </button>
       )}
@@ -52,9 +53,12 @@ export default function DragonBall() {
   const isOnline = useOnlineStatus();
 
   return (
-    <main className="page dragonball-page">
-      <header className="dragonball-header">
-        <h1 id="dragonball-heading">Personagens Dragon Ball</h1>
+    <main className="page catalog-page dragonball-page">
+      <header className="catalog-header dragonball-header">
+        <div>
+          <h1 id="dragonball-heading">Personagens Dragon Ball</h1>
+          <p>Conheça os personagens, suas afiliações e níveis de ki.</p>
+        </div>
         <NavigateButton path="/">Voltar para Home</NavigateButton>
       </header>
       <section aria-labelledby="dragonball-heading">

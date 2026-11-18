@@ -1,91 +1,35 @@
-.filmes-page {
-  --filmes-text: #f6f0ff;
-  --filmes-muted: #c5b8d6;
-  --filmes-border: #47345d;
-  --filmes-surface: #20172e;
-  flex: 1;
-  padding: clamp(20px, 4vw, 44px);
-  background: radial-gradient(ellipse at top, #291940 0, #13101e 46%, #100d18 100%);
-  color: var(--filmes-muted);
-  text-align: left;
-}
-
-.filmes-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px 24px;
-  margin-bottom: clamp(24px, 4vw, 40px);
-}
-
-.filmes-header h1 {
-  margin: 0;
-  color: var(--filmes-text);
-  font-size: clamp(2rem, 6vw, 3.25rem);
-  font-weight: 750;
-  line-height: 1.08;
-}
-
-.filmes-header .navigate-button {
-  margin: 0;
-  padding: 8px 12px;
-  border: 1px solid #5d4278;
-  border-radius: 9px;
-  background: #291b3c;
-  color: #e3c9ff;
-  font: inherit;
-  font-size: 0.875rem;
-}
-
-.filmes-header .navigate-button:hover,
-.filmes-header .navigate-button:focus-visible {
-  border-color: #c084fc;
-  outline-color: #c084fc;
-}
-
 .filmes-page h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0 0 16px;
-  color: var(--filmes-text);
-  font-weight: 700;
+  color: var(--text);
+  font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+  font-weight: 750;
 }
 
-.favorites-status {
-  margin-bottom: 14px;
-}
-
-.favorites-gallery,
-.movie-search-results {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(12px, 2vw, 20px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.filmes-page h2::before {
+  flex: 0 0 3px;
+  height: 0.85em;
+  border-radius: 2px;
+  background: linear-gradient(var(--accent), var(--purple));
+  content: '';
 }
 
 .favorite-movie,
 .search-movie {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
   overflow: hidden;
-  border: 1px solid var(--filmes-border);
-  border-radius: 16px;
-  background: var(--filmes-surface);
-  box-shadow: 0 8px 20px #08060d55;
 }
 
 .favorite-movie-poster,
 .search-movie-poster {
-  box-sizing: border-box;
   position: relative;
   display: grid;
   place-items: center;
   aspect-ratio: 2 / 3;
+  box-sizing: border-box;
   padding: 12px;
-  background: radial-gradient(ellipse at center, #3c2655, #191123 75%);
+  background: radial-gradient(ellipse at center, var(--glow-purple), transparent 76%), var(--surface);
   font-size: 0.875rem;
   text-align: center;
 }
@@ -106,13 +50,13 @@
   flex-direction: column;
   gap: 10px;
   padding: clamp(10px, 1.5vw, 16px);
-  border-top: 1px solid var(--filmes-border);
+  border-top: 1px solid var(--border);
 }
 
 .favorite-movie-details h3,
 .search-movie-details h3 {
   margin: 0;
-  color: var(--filmes-text);
+  color: var(--text);
   font-size: 1rem;
   line-height: 1.3;
   overflow-wrap: anywhere;
@@ -127,88 +71,33 @@
   gap: 4px 8px;
   margin-top: auto;
   font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
   line-height: 1.5;
 }
 
-.favorite-movie-rating {
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: #43323c;
-  color: #ffe1a1;
-}
-
+.favorite-movie-rating,
 .search-movie-type {
   padding: 2px 7px;
+  border: 1px solid var(--catalog-outline);
   border-radius: 6px;
-  background: #3b2750;
+  background: var(--accent-bg);
   color: #e3cbff;
   overflow-wrap: anywhere;
 }
 
-.filmes-search {
-  margin-top: clamp(24px, 5vw, 48px);
-  padding: clamp(14px, 3vw, 26px);
-  border: 1px solid var(--filmes-border);
-  border-radius: 16px;
-  background: var(--filmes-surface);
+.favorite-movie-rating strong {
+  color: var(--text);
 }
 
-.filmes-search label {
-  display: block;
-  margin-bottom: 6px;
+.filmes-search {
+  margin-top: clamp(24px, 5vw, 48px);
+  padding: clamp(12px, 2.8vw, 24px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--catalog-panel);
 }
 
 .filmes-search input {
-  box-sizing: border-box;
-  width: 100%;
-  margin-bottom: 14px;
-  padding: 10px 12px;
-  border: 1px solid #74588e;
-  border-radius: 9px;
-  background: #171020;
-  color: var(--filmes-text);
-  font: inherit;
-}
-
-.filmes-search input::placeholder {
-  color: var(--filmes-muted);
-}
-
-.filmes-search input:focus-visible {
-  outline: 2px solid #c084fc;
-  outline-offset: 2px;
-}
-
-@media (max-width: 880px) {
-  .favorites-gallery,
-  .movie-search-results {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 620px) {
-  .favorites-gallery,
-  .movie-search-results {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .favorite-movie:hover,
-  .search-movie:hover {
-    border-color: #8a60b0;
-    box-shadow: 0 10px 24px #08060d88;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .favorite-movie,
-  .search-movie {
-    transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-  }
-
-  .favorite-movie:hover,
-  .search-movie:hover {
-    transform: translateY(-3px);
-  }
+  max-width: 34rem;
+  margin-bottom: 16px;
 }
