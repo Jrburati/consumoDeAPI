@@ -1,0 +1,179 @@
+.pokemon-page {
+  --pokemon-text: #f6f0ff;
+  --pokemon-muted: #c5b8d6;
+  flex: 1;
+  padding: clamp(20px, 4vw, 44px);
+  color: var(--pokemon-muted);
+  background: radial-gradient(ellipse at top, #291940 0, #13101e 46%, #100d18 100%);
+  text-align: left;
+}
+
+.pokemon-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+.pokemon-page-header h1 {
+  margin: 0;
+  color: var(--pokemon-text);
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  font-weight: 750;
+  line-height: 1.08;
+}
+
+.pokemon-page-header .navigate-button {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid #5d4278;
+  border-radius: 9px;
+  background: #291b3c;
+  color: #e3c9ff;
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.pokemon-page-header .navigate-button:hover,
+.pokemon-page-header .navigate-button:focus-visible {
+  border-color: #c084fc;
+  outline-color: #c084fc;
+}
+
+.pokemon-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 20px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pokemon-gallery-status {
+  margin-bottom: 16px;
+}
+
+.pokemon-card {
+  --pokemon-type: #cebfeb;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: clamp(10px, 1.6vw, 16px);
+  border: 1px solid #47345d;
+  border-radius: 20px;
+  background: #20172e;
+  box-shadow: 0 8px 20px #08060d55;
+}
+
+.pokemon-card-artwork {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1.1;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--pokemon-type) 25%, #22162f),
+    #181122 78%
+  );
+}
+
+.pokemon-card-artwork img {
+  display: block;
+  width: 92%;
+  height: auto;
+  filter: drop-shadow(0 8px 8px #09061280);
+}
+
+.pokemon-card h2 {
+  margin: 0 0 8px;
+  color: var(--pokemon-text);
+  font-weight: 700;
+  text-transform: capitalize;
+  overflow-wrap: anywhere;
+}
+
+.pokemon-card-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.pokemon-card-types li {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pokemon-type) 18%, #20172e);
+  color: var(--pokemon-type);
+  font-size: 0.72rem;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.pokemon-gallery [data-type='electric'] { --pokemon-type: #f9d871; }
+.pokemon-gallery [data-type='fire'] { --pokemon-type: #ffb08b; }
+.pokemon-gallery [data-type='flying'] { --pokemon-type: #c9c0ff; }
+.pokemon-gallery [data-type='grass'] { --pokemon-type: #a5e795; }
+.pokemon-gallery [data-type='poison'] { --pokemon-type: #f1adef; }
+.pokemon-gallery [data-type='water'] { --pokemon-type: #9bd8ff; }
+.pokemon-gallery [data-type='ghost'] { --pokemon-type: #d4b9ff; }
+.pokemon-gallery [data-type='normal'] { --pokemon-type: #eed7b9; }
+.pokemon-gallery [data-type='fighting'] { --pokemon-type: #ffb7b7; }
+.pokemon-gallery [data-type='steel'] { --pokemon-type: #c2d4e8; }
+
+.pokemon-card-measures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: auto 0 0;
+  padding-top: 10px;
+  border-top: 1px solid #47345d;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.pokemon-card-measures dd {
+  margin: 0;
+  color: var(--pokemon-text);
+  font-weight: 650;
+}
+
+@media (max-width: 880px) {
+  .pokemon-gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .pokemon-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 340px) {
+  .pokemon-gallery {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pokemon-card:hover {
+    border-color: #8a60b0;
+    box-shadow: 0 10px 24px #08060d88;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .pokemon-card {
+    transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  .pokemon-card:hover {
+    transform: translateY(-3px);
+  }
+}

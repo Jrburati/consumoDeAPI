@@ -1,25 +1,39 @@
-import { useDragonBall } from '../hooks/useDragonBall.jsx';
-import { useOnlineStatus } from '../hooks/useOnlineStatus.jsx';
+import { useState } from 'react';
 
-export default function DragonBallCharacter() {
-  const { DBZ, loading: loadingDBZ, error: errorDBZ } = useDragonBall();
-  const isOnline = useOnlineStatus();
+function displayValue(value) {
+  return value?.toString().trim() || 'Não informado';
+}
+
+export default function DragonBallCharacter({ character }) {
+  const { name, image, race, gender, ki, affiliation } = character;
+  const [failedImage, setFailedImage] = useState(null);
+  const imageUrl = image?.trim();
+  const displayName = name === 'Celula' ? 'Cell' : name?.trim() || 'Personagem sem nome';
+  const details = [
+    ['Raça', race],
+    ['Gênero', gender],
+    ['Ki', ki],
+    ['Afiliação', affiliation],
+  ];
 
   return (
-    <>
-      {loadingDBZ ? (
-        isOnline && <p>Loading...</p>
-      ) : errorDBZ ? (
-        isOnline && <p>Erro ao carregar o personagem.</p>
-      ) : (
-        <img
-          src={DBZ?.image}
-          className="base"
-          height="280"
-          alt=""
-          style={{ marginTop: "50px" }}
-        />
-      )}
-    </>
+    <article className="dragonball-character">
+      <div className="dragonball-character-image">
+        {imageUrl && imageUrl !== failedImage ? (
+          <img src={imageUrl} alt="" onError={() => setFailedImage(imageUrl)} />
+        ) : (
+          <span>Imagem indisponível</span>
+        )}
+      </div>
+      <h2>{displayName}</h2>
+      <dl className="dragonball-character-details">
+        {details.map(([label, value]) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd>{displayValue(value)}</dd>
+          </div>
+        ))}
+      </dl>
+    </article>
   );
 }

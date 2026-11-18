@@ -1,6 +1,40 @@
 import { useState, useEffect } from 'react';
 import { useOnlineStatus } from '../hooks/useOnlineStatus.jsx';
 
+const typeLabels = {
+  movie: 'Filme',
+  series: 'Série',
+  episode: 'Episódio',
+  game: 'Jogo',
+};
+
+function MovieSearchResult({ movie }) {
+  const { Title: title, Year: year, Poster: poster, Type: type } = movie;
+  const [failedPoster, setFailedPoster] = useState(null);
+  const posterUrl = poster?.trim();
+  const hasPoster = posterUrl && posterUrl !== 'N/A' && posterUrl !== failedPoster;
+  const typeLabel = type && type !== 'N/A' ? (typeLabels[type] ?? type) : null;
+
+  return (
+    <article className="search-movie">
+      <div className="search-movie-poster">
+        {hasPoster ? (
+          <img src={posterUrl} alt="" onError={() => setFailedPoster(posterUrl)} />
+        ) : (
+          <span>Pôster indisponível</span>
+        )}
+      </div>
+      <div className="search-movie-details">
+        <h3>{title}</h3>
+        <div className="search-movie-meta">
+          <span>{year}</span>
+          {typeLabel && <span className="search-movie-type">{typeLabel}</span>}
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function MovieTe() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -62,11 +96,12 @@ export default function MovieTe() {
 
   return (
     <div className="card">
-      <h2>Busca de Filmes </h2>
-      <p>Digite o nome do filme abaixo:</p>
+      <h2 id="movie-search-heading">Busca de Filmes</h2>
+      <label htmlFor="movie-search">Digite o nome do filme abaixo</label>
       
       {/* Campo de input  */}
       <input
+        id="movie-search"
         type="text"
         value={query}
         onChange={(e) => {
@@ -76,7 +111,6 @@ export default function MovieTe() {
           setLoading(false);
         }}
         placeholder="Buscar filme..."
-        style={{ padding: '10px', width: '100%', marginBottom: '15px', borderRadius: '5px', border: '1px solid #ccc' }}
       />
 
       {/* Mostra Carregando, a Lista de Filmes ou "Nenhum filme" */}
@@ -87,10 +121,10 @@ export default function MovieTe() {
       ) : error ? (
         <p role="alert">{error}</p>
       ) : movies.length > 0 ? (
-        <ul style={{ textAlign: 'left', listStyleType: 'none', padding: 0 }}>
+        <ul className="movie-search-results">
           {movies.map((movie) => (
-            <li key={movie.imdbID} style={{ marginBottom: '10px', padding: '10px', borderBottom: '1px solid #eee' }}>
-              <strong>{movie.Title}</strong> ({movie.Year})
+            <li key={movie.imdbID}>
+              <MovieSearchResult movie={movie} />
             </li>
           ))}
         </ul>

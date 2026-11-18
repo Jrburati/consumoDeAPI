@@ -51,12 +51,22 @@ function movieRequest(parameter, omdbParameter) {
         return res.json({
           Response: 'True',
           Search: data.Search.map(movie => ({
-            Title: safeValue(movie.Title), Year: safeValue(movie.Year), imdbID: safeValue(movie.imdbID),
+            Title: safeValue(movie.Title),
+            Year: safeValue(movie.Year),
+            imdbID: safeValue(movie.imdbID),
+            Poster: safeValue(movie.Poster),
+            Type: safeValue(movie.Type),
           })),
         });
       }
       if (typeof data.Title !== 'string') throw new Error('Invalid movie response');
-      return res.json({ Response: 'True', Title: safeValue(data.Title), Poster: safeValue(data.Poster), imdbRating: safeValue(data.imdbRating) });
+      return res.json({
+        Response: 'True',
+        Title: safeValue(data.Title),
+        Year: safeValue(data.Year),
+        Poster: safeValue(data.Poster),
+        imdbRating: safeValue(data.imdbRating),
+      });
     } catch (error) {
       if (controller.signal.aborted) return;
       return res.status(error.name === 'TimeoutError' ? 504 : 502).json({ Response: 'False', Error: 'Não foi possível consultar os filmes. Tente novamente.' });

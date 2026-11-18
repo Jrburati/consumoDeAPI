@@ -1,0 +1,178 @@
+.dragonball-page {
+  --dragonball-text: #f6f0ff;
+  --dragonball-muted: #c5b8d6;
+  --dragonball-border: #47345d;
+  --dragonball-surface: #20172e;
+  flex: 1;
+  padding: clamp(20px, 4vw, 44px);
+  background: radial-gradient(ellipse at top, #291940 0, #13101e 46%, #100d18 100%);
+  color: var(--dragonball-muted);
+  text-align: left;
+}
+
+.dragonball-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+.dragonball-header h1 {
+  margin: 0;
+  color: var(--dragonball-text);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 750;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.dragonball-header .navigate-button,
+.dragonball-profile .counter {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid #5d4278;
+  border-radius: 9px;
+  background: #291b3c;
+  color: #e3c9ff;
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.dragonball-header .navigate-button:hover,
+.dragonball-profile .counter:hover,
+.dragonball-header .navigate-button:focus-visible,
+.dragonball-profile .counter:focus-visible {
+  border-color: #c084fc;
+  outline-color: #c084fc;
+}
+
+.dragonball-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 20px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dragonball-gallery-status {
+  margin-bottom: 16px;
+}
+
+.dragonball-character {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: clamp(10px, 1.5vw, 16px);
+  border: 1px solid var(--dragonball-border);
+  border-radius: 18px;
+  background: var(--dragonball-surface);
+  box-shadow: 0 8px 20px #08060d55;
+}
+
+.dragonball-character-image {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  height: clamp(164px, 23vw, 258px);
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: radial-gradient(ellipse at 50% 55%, #50326b, #191122 75%);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.dragonball-character-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 8px #09061288);
+}
+
+.dragonball-character h2 {
+  margin: 0 0 12px;
+  color: var(--dragonball-text);
+  font-size: 1.25rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.dragonball-character-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: auto 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--dragonball-border);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.dragonball-character-details dd {
+  margin: 0;
+  color: var(--dragonball-text);
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.dragonball-profile {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-top: clamp(24px, 5vw, 40px);
+  padding: clamp(14px, 3vw, 24px);
+  border: 1px solid var(--dragonball-border);
+  border-radius: 16px;
+  background: var(--dragonball-surface);
+}
+
+.dragonball-profile h1 {
+  margin: 0;
+  color: var(--dragonball-text);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: normal;
+}
+
+@media (max-width: 880px) {
+  .dragonball-gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .dragonball-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 375px) {
+  .dragonball-character-details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dragonball-character:hover {
+    border-color: #8a60b0;
+    box-shadow: 0 10px 24px #08060d88;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .dragonball-character {
+    transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  .dragonball-character:hover {
+    transform: translateY(-3px);
+  }
+}

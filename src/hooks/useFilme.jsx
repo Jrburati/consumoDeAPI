@@ -1,34 +1,39 @@
+import { useEffect, useState } from 'react';
+import { getFilme } from '../api/filmeApi.js';
 
-import { useEffect, useState } from "react";
-import { getFilme } from "../api/filmeApi";
+const favoriteTitles = [
+  'Fear and Loathing in Las Vegas',
+  'The Hangover',
+  'Scary Movie',
+  'The Dreamseller',
+  'Akira',
+  'Pulp Fiction',
+  'The Wolf of Wall Street',
+  'Scarface',
+];
 
 export function useFilme() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [favorites, setFavorites] = useState(null);
 
   useEffect(() => {
-    async function fetchFilme() {
-      try {
-        setLoading(true);
-        const result = await getFilme();
+    const controller = new AbortController();
 
-        if (result.Response === "False") {
-          throw new Error(result.Error || "Erro ao buscar filme");
-        }
+    async function fetchFavorites() {
+      const responses = await Promise.allSettled(
+        favoriteTitles.map((title) => getFilme(title, controller.signal)),
+      );
 
-        setData(result);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
+      if (controller.signal.aborted) return;
+
+      const movies = responses.flatMap((response) =>
+        response.status === 'fulfilled' ? [response.value] : [],
+      );
+      setFavorites({ movies, unavailableCount: favoriteTitles.length - movies.length });
     }
 
-    fetchFilme();
+    fetchFavorites();
+    return () => controller.abort();
   }, []);
 
-  return { filme: data, loading, error };
+  return favorites;
 }
-
-  

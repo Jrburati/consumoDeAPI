@@ -1,29 +1,29 @@
-import { useFilme } from '../hooks/useFilme.jsx';
-import { useOnlineStatus } from '../hooks/useOnlineStatus.jsx';
+import { useState } from 'react';
 
-export default function FavoriteMovie() {
-  const { filme, loading: loadingFilme, error: errorFilme } = useFilme();
-  const isOnline = useOnlineStatus();
+export default function FavoriteMovie({ movie }) {
+  const { Poster: poster, Title: title, Year: year, imdbRating: rating } = movie;
+  const [failedPoster, setFailedPoster] = useState(null);
+  const hasPoster = poster && poster !== 'N/A' && poster !== failedPoster;
+  const hasRating = rating && rating !== 'N/A';
 
   return (
-    <>
-      {loadingFilme ? (
-        isOnline && <p>Loading...</p>
-      ) : errorFilme ? (
-        isOnline && <p>Erro ao carregar o filme favorito.</p>
-      ) : (
-        <>
-          <h2>Meu filme favorito é: {filme?.Title}</h2>
-          <img
-            src={filme?.Poster}
-            className="base"
-            width="170"
-            height="179"
-            alt=""
-          />
-          <p>Nota do IMDB: {filme?.imdbRating}</p>
-        </>
-      )}
-    </>
+    <article className="favorite-movie">
+      <div className="favorite-movie-poster">
+        {hasPoster ? (
+          <img src={poster} alt="" onError={() => setFailedPoster(poster)} />
+        ) : (
+          <span>Pôster indisponível</span>
+        )}
+      </div>
+      <div className="favorite-movie-details">
+        <h3>{title}</h3>
+        <div className="favorite-movie-meta">
+          <span>{year}</span>
+          <span className="favorite-movie-rating">
+            IMDb <strong>{hasRating ? rating.replace('.', ',') : 'sem nota'}</strong>
+          </span>
+        </div>
+      </div>
+    </article>
   );
 }

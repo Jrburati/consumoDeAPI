@@ -32,18 +32,39 @@ test('OMDb proxy validation, responses, cancellation and secret isolation', asyn
         upstream = async url => {
           assert.equal(url.searchParams.get('s'), query);
           assert.equal(url.searchParams.get('apikey'), apiKey);
-          return json({ Response: 'True', apikey: apiKey, Search: [{ Title: query, Year: '2026', imdbID: 'tt1', secret: apiKey }] });
+          return json({
+            Response: 'True',
+            apikey: apiKey,
+            Search: [{
+              Title: query, Year: '2026', imdbID: 'tt1', Poster: 'https://example.test/poster.jpg', Type: 'movie', secret: apiKey,
+            }],
+          });
         };
         const response = await get('/api/movies/search?' + new URLSearchParams({ query }));
         assert.equal(response.status, 200);
         const body = await response.text();
         assert.ok(!body.includes(apiKey));
-        assert.equal(JSON.parse(body).Search[0].Title, query);
+        assert.deepEqual(JSON.parse(body), {
+          Response: 'True',
+          Search: [{ Title: query, Year: '2026', imdbID: 'tt1', Poster: 'https://example.test/poster.jpg', Type: 'movie' }],
+        });
       }
-      upstream = async () => json({ Response: 'True', Title: apiKey, Poster: apiKey, imdbRating: '8', secret: apiKey });
+      upstream = async () => json({
+        Response: 'True',
+        Search: [{ Title: 'Movie', Poster: `https://example.test/${apiKey}.jpg`, Type: apiKey }, { Title: 'Missing poster' }],
+      });
+      const search = await get('/api/movies/search?query=Movie');
+      assert.equal(search.status, 200);
+      assert.deepEqual((await search.json()).Search, [
+        { Title: 'Movie', Year: '', imdbID: '', Poster: 'https://example.test/[redacted].jpg', Type: '[redacted]' },
+        { Title: 'Missing poster', Year: '', imdbID: '', Poster: '', Type: '' },
+      ]);
+      upstream = async () => json({ Response: 'True', Title: apiKey, Year: '1998', Poster: apiKey, imdbRating: '8', secret: apiKey });
       const response = await get('/api/movies/title?title=Favorite');
       assert.equal(response.status, 200);
-      assert.ok(!(await response.text()).includes(apiKey));
+      assert.deepEqual(await response.json(), {
+        Response: 'True', Title: '[redacted]', Year: '1998', Poster: '[redacted]', imdbRating: '8',
+      });
     });
 
     await t.test('preserves no-results response and uses 404 for missing favorite title', async () => {
