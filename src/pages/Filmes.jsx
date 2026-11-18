@@ -45,12 +45,12 @@ export default function Filmes() {
         </div>
         <NavigateButton path="/">Voltar para Home</NavigateButton>
       </header>
+      <section className="catalog-search filmes-search" aria-labelledby="movie-search-heading">
+        <ListMovie />
+      </section>
       <section aria-labelledby="favorites-heading">
         <h2 id="favorites-heading">Meus Favoritos</h2>
         {isOnline && <FavoritesGallery />}
-      </section>
-      <section className="catalog-search filmes-search" aria-labelledby="movie-search-heading">
-        <ListMovie />
       </section>
     </main>
   );
