@@ -36,8 +36,13 @@ export function usePokemon() {
       try {
         const names = await getPokemonNames(controller.signal);
         if (!controller.signal.aborted) setCatalog(names);
-      } catch {
-        if (!controller.signal.aborted) setCatalogError(true);
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        console.warn('Falha ao carregar o catálogo de Pokémon.', {
+          code: error.response?.data?.code ?? error.code,
+          status: error.response?.status,
+        });
+        setCatalogError(true);
       }
     }
 

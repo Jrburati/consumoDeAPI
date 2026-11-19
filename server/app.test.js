@@ -125,3 +125,142 @@ test('OMDb proxy validation, responses, cancellation and secret isolation', asyn
     else process.env.OMDB_API_KEY = originalKey;
   }
 });
+
+test('PokéAPI proxy returns only catalog and card data', async t => {
+  const nativeFetch = globalThis.fetch;
+  const privateDetail = 'private upstream diagnostic';
+  let upstream;
+  t.mock.method(globalThis, 'fetch', (url, options) => {
+    const target = new URL(url);
+    assert.equal(target.origin, 'https://pokeapi.co');
+    assert.equal(options.redirect, 'error');
+    return upstream(target, options.signal);
+  });
+  const server = app.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  const base = `http://127.0.0.1:${server.address().port}/api/pokemon`;
+  const get = (route, options) => nativeFetch(base + route, options);
+
+  async function expectError(route, status, code) {
+    const response = await get(route);
+    assert.equal(response.status, status);
+    assert.match(response.headers.get('content-type'), /^application\/json/);
+    assert.equal(response.headers.get('cache-control'), 'no-store');
+    const body = await response.text();
+    assert.ok(!body.includes(privateDetail));
+    assert.ok(!body.includes('pokeapi.co'));
+    const data = JSON.parse(body);
+    assert.deepEqual(Object.keys(data).sort(), ['code', 'error']);
+    assert.equal(data.code, code);
+  }
+
+  try {
+    await t.test('returns all names in order and builds pagination on the fixed upstream host', async () => {
+      const offsets = [];
+      upstream = async url => {
+        assert.equal(url.pathname, '/api/v2/pokemon/');
+        assert.equal(url.searchParams.get('limit'), '2000');
+        const offset = url.searchParams.get('offset');
+        offsets.push(offset);
+        return Response.json(offset === '0' ? {
+          next: 'https://example.test/unused',
+          results: [{ name: 'pikachu', url: privateDetail }, { name: 'mewtwo' }],
+          privateDetail,
+        } : { next: null, results: [{ name: 'lucario-mega' }] });
+      };
+      const response = await get('/catalog');
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get('cache-control'), 'no-store');
+      assert.deepEqual(await response.json(), { names: ['pikachu', 'mewtwo', 'lucario-mega'] });
+      assert.deepEqual(offsets, ['0', '2']);
+    });
+
+    await t.test('returns official artwork, fallback and the other card fields only', async () => {
+      const sprites = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
+      const artwork = `${sprites}other/official-artwork/25.png`;
+      const fallbackArtwork = `${sprites}25.png`;
+      upstream = async url => {
+        assert.equal(url.pathname, '/api/v2/pokemon/pikachu/');
+        assert.equal(url.search, '');
+        return Response.json({
+          sprites: { front_default: fallbackArtwork, other: { 'official-artwork': { front_default: artwork } } },
+          types: [{ type: { name: 'electric', url: privateDetail } }], height: 4, weight: 60, privateDetail,
+        });
+      };
+      const response = await get('/pikachu?ignored=value');
+      assert.equal(response.status, 200);
+      assert.deepEqual(await response.json(), { artwork, fallbackArtwork, types: ['electric'], height: 4, weight: 60 });
+
+      upstream = async () => Response.json({
+        sprites: { front_default: 'https://pokeapi.co/untrusted.png' }, types: [], height: 0, weight: 0,
+      });
+      assert.deepEqual(await (await get('/pikachu')).json(), { artwork: null, fallbackArtwork: null, types: [], height: 0, weight: 0 });
+    });
+
+    await t.test('rejects invalid names before contacting the upstream API', async () => {
+      let calls = 0;
+      upstream = async () => { calls++; return Response.json({}); };
+      for (const route of ['/pika%20chu', '/pika%2Fchu', '/PIKACHU', '/pikachu%0A', '/%E0%A4%A', `/${'a'.repeat(101)}`]) {
+        await expectError(route, 400, 'INVALID_NAME');
+      }
+      assert.equal(calls, 0);
+    });
+
+    await t.test('distinguishes upstream HTTP, network, invalid JSON and invalid response shapes', async () => {
+      const cases = [
+        ['/pikachu', () => new Response(privateDetail, { status: 404 }), 404, 'POKEMON_NOT_FOUND'],
+        ['/catalog', () => new Response(privateDetail, { status: 404 }), 502, 'UPSTREAM_HTTP'],
+        ['/catalog', () => new Response(privateDetail, { status: 500 }), 502, 'UPSTREAM_HTTP'],
+        ['/catalog', () => new Response(privateDetail, { status: 429 }), 503, 'UPSTREAM_HTTP'],
+        ['/catalog', () => new Response(privateDetail, { status: 504 }), 504, 'UPSTREAM_HTTP'],
+        ['/catalog', () => { throw new TypeError(privateDetail); }, 502, 'UPSTREAM_NETWORK'],
+        ['/catalog', () => new Response(privateDetail), 502, 'INVALID_UPSTREAM_RESPONSE'],
+        ['/catalog', () => Response.json({ results: [], next: 'https://example.test/' }), 502, 'INVALID_UPSTREAM_RESPONSE'],
+        ['/catalog', () => Response.json({ results: [{ name: privateDetail }], next: null }), 502, 'INVALID_UPSTREAM_RESPONSE'],
+        ['/pikachu', () => Response.json({ sprites: {}, types: [{ type: null }], height: 4, weight: 60 }), 502, 'INVALID_UPSTREAM_RESPONSE'],
+      ];
+      for (const [route, respond, status, code] of cases) {
+        upstream = async () => respond();
+        await expectError(route, status, code);
+      }
+    });
+
+    await t.test('aborts the upstream on timeout and reports a gateway timeout', async subtest => {
+      const timeout = AbortSignal.timeout.bind(AbortSignal);
+      subtest.mock.method(AbortSignal, 'timeout', delay => {
+        assert.equal(delay, 8000);
+        return timeout(25);
+      });
+      let reason;
+      upstream = (_url, signal) => new Promise((resolve, reject) => {
+        signal.addEventListener('abort', () => {
+          reason = signal.reason;
+          reject(reason);
+        }, { once: true });
+      });
+      await expectError('/catalog', 504, 'UPSTREAM_TIMEOUT');
+      assert.equal(reason?.name, 'TimeoutError');
+    });
+
+    await t.test('client disconnect aborts an in-flight Pokémon request', { timeout: 2000 }, async () => {
+      const started = Promise.withResolvers();
+      const canceled = Promise.withResolvers();
+      upstream = (_url, signal) => new Promise((resolve, reject) => {
+        signal.addEventListener('abort', () => {
+          canceled.resolve(signal.reason);
+          reject(signal.reason);
+        }, { once: true });
+        started.resolve();
+      });
+      const controller = new AbortController();
+      const request = get('/pikachu', { signal: controller.signal });
+      await started.promise;
+      controller.abort();
+      await assert.rejects(request, { name: 'AbortError' });
+      assert.equal((await canceled.promise).name, 'AbortError');
+    });
+  } finally {
+    server.closeAllConnections();
+    await new Promise(resolve => server.close(resolve));
+  }
+});
