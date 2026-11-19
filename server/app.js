@@ -1,5 +1,6 @@
 import express from 'express';
 import { fileURLToPath } from 'node:url';
+import pokemonRouter from './pokemon.js';
 
 const app = express();
 
@@ -78,6 +79,7 @@ function movieRequest(parameter, omdbParameter) {
 
 app.get('/api/movies/search', movieRequest('query', 's'));
 app.get('/api/movies/title', movieRequest('title', 't'));
+app.use('/api/pokemon', pokemonRouter);
 // API requests must never fall through to the frontend or its SPA fallback.
 app.use('/api', (req, res) => res.status(404).json({ Error: 'Rota não encontrada.' }));
 app.use(express.static(fileURLToPath(new URL('../dist', import.meta.url))));
